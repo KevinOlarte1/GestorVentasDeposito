@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
  * Entidad que representa la persona a la que se vende el producto.
  */
@@ -30,6 +33,11 @@ public class Cliente {
     @JoinColumn(name = "fk_vendedor", nullable = false)
     private Vendedor vendedor;
 
+    /**
+     * Lista de pedidos que tiene este cliente asociados.
+     */
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Pedido> pedidos = new LinkedHashSet<>();
 
 
     public Cliente() {}
