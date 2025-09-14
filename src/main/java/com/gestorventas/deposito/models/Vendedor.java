@@ -1,4 +1,4 @@
-package com.gestorventas.deposito.modelos;
+package com.gestorventas.deposito.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

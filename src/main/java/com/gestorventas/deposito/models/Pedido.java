@@ -1,4 +1,4 @@
-package com.gestorventas.deposito.modelos;
+package com.gestorventas.deposito.models;
 
 
 import jakarta.persistence.*;
