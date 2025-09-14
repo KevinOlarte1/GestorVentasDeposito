@@ -26,4 +26,45 @@ De esta forma, los administradores pueden tener una visión clara de la activida
 - **Spring Boot 3.x** (API REST)  
 - **Maven** (gestor de dependencias)  
 - **PostgreSQL / MySQL** (base de datos relacional)  
-- **Hibernate / JPA** (persistencia de datos)  
+- **Hibernate / JPA** (persistencia de datos)
+
+## 🗂️ Modelo Entidad-Relación
+
+```mermaid
+erDiagram
+    VENDEDOR ||--o{ VENTA : realiza
+    CLIENTE ||--o{ VENTA : recibe
+    VENTA ||--|{ LINEA_VENTA : contiene
+    EXPOSITOR ||--o{ VENTA : registra
+    SOUVENIR ||--o{ LINEA_VENTA : incluye
+
+    VENDEDOR {
+        Long id
+        String nombre
+        String password
+    }
+    CLIENTE {
+        Long id
+        String nombre
+        String email
+    }
+    EXPOSITOR {
+        Long id
+        String ubicacion
+    }
+    SOUVENIR {
+        Long id
+        String nombre
+        Double precio
+    }
+    VENTA {
+        Long id
+        Date fecha
+        Double total
+    }
+    LINEA_VENTA {
+        Long id
+        Integer cantidad
+        Double subtotal
+    }
+
