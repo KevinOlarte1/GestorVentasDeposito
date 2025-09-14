@@ -33,9 +33,21 @@ public class Pedido {
     private Cliente cliente;
 
     /**
+     * Vendedor que ha realizado el pedido
+     */
+    @ManyToOne
+    @JoinColumn(name = "fk_vendedor", nullable = false)
+    private Vendedor vendedor;
+
+    /**
      * Líneas de pedido asociadas.
      */
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<LineaPedido> lineas = new LinkedHashSet<>();
+
+    public Pedido(){
+        this.fecha = LocalDateTime.now();
+    }
+
 
 }

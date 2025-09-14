@@ -35,11 +35,11 @@ public class Vendedor {
     private String password;
 
     /**
-     * Lista de clientes que tiene este vendedor.
+     * Lista de pedidos que tiene que gestionar este vendedor asociados.
      */
     @OneToMany(mappedBy = "vendedor", cascade = CascadeType.ALL)
     @JsonIgnore
-    private Set<Cliente> clientes = new LinkedHashSet<>();
+    private Set<Pedido> pedidos = new LinkedHashSet<>();
 
 
     public Vendedor() {}
