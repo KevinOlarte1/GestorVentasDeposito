@@ -60,7 +60,6 @@ erDiagram
     VENTA {
         Long id
         Date fecha
-        Double total
     }
     LINEA_VENTA {
         Long id
