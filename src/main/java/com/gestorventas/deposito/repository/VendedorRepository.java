@@ -14,4 +14,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface VendedorRepository extends JpaRepository<Vendedor, Long> {
 
+    public Vendedor findById(long id);
 }
