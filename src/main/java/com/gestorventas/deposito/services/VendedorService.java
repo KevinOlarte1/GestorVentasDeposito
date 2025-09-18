@@ -20,7 +20,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class VendedorService {
 
-    VendedorRepository vendedorRepository;
+    private VendedorRepository vendedorRepository;
 
     /**
      * Guardar un nuevo vendedor en el sistema.

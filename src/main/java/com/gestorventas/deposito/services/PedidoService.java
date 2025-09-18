@@ -25,9 +25,9 @@ import java.util.List;
 @AllArgsConstructor
 public class PedidoService {
 
-    PedidoRepository pedidoRepository;
-    VendedorRepository vendedorRepository;
-    ClienteRepository clienteRepository;
+    private PedidoRepository pedidoRepository;
+    private VendedorRepository vendedorRepository;
+    private ClienteRepository clienteRepository;
 
     /**
      * Guardar un nuevo pedido en el sistema.
@@ -86,6 +86,7 @@ public class PedidoService {
      * @param idCliente cleinte que se le vendera el pedido
      * @param fecha fecha que se realizo el pedido actualizado
      * @return peiddo actualizado.
+     * @throws RuntimeException referencia no existe.
      */
     public PedidoResponseDto update(long id, Long idVendedor, Long idCliente, LocalDate fecha) {
         Pedido pedido = pedidoRepository.findById(id);
@@ -119,6 +120,7 @@ public class PedidoService {
         pedidoRepository.deleteById(id);
 
     }
+
 
 
 }
