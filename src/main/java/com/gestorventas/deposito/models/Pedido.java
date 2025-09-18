@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -23,7 +24,7 @@ public class Pedido {
      * Fecha y hora del pedido.
      */
     @Column(nullable = false)
-    private LocalDateTime fecha;
+    private LocalDate fecha;
 
     /**
      * Cliente que realizó el pedido.
@@ -46,7 +47,7 @@ public class Pedido {
     private Set<LineaPedido> lineas = new LinkedHashSet<>();
 
     public Pedido(){
-        this.fecha = LocalDateTime.now();
+        this.fecha = LocalDate.now();
     }
 
 

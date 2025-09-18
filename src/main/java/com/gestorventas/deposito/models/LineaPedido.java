@@ -41,12 +41,5 @@ public class LineaPedido {
     private Double precio;
 
     public LineaPedido() {}
-    public LineaPedido(Integer cantidad){
-        this.cantidad = cantidad;
-        this.precio = null;
-    }
-    public LineaPedido(Integer cantidad, Double precio) {
-        this.cantidad = cantidad;
-        this.precio = precio;
-    }
+
 }

@@ -2,6 +2,7 @@ package com.gestorventas.deposito.repository;
 
 import com.gestorventas.deposito.models.Pedido;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -12,5 +13,7 @@ import org.springframework.stereotype.Repository;
  * @author Kevin William Olarte Braun.
  */
 @Repository
-public interface PedidoRepository extends JpaRepository<Pedido,Long> {
+public interface PedidoRepository extends JpaRepository<Pedido,Long>, JpaSpecificationExecutor<Pedido> {
+
+    public Pedido findById(long id);
 }

@@ -9,11 +9,18 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Servicio encargado de gestionar la logica del negocio relacionado con los vendedores.
+ * <p>
+ *     Permite registrar, consultar, actualizar y eliminar vendedores.
+ * </p>
+ * @author Kevin William Olarte Braun
+ */
 @Service
 @AllArgsConstructor
 public class VendedorService {
 
-    VendedorRepository vendedorRepository;
+    private VendedorRepository vendedorRepository;
 
     /**
      * Guardar un nuevo vendedor en el sistema.
@@ -37,14 +44,12 @@ public class VendedorService {
      * Obtener un vendedor por su id.
      * @param id id que representa el identificador unico
      * @return DTO con los datos guardados visibles.
-     * @throws IllegalArgumentException id null.
      */
-    public VendedorResponseDto get(Long id) {
-        if (id == null)
-            throw new IllegalArgumentException();
-
-        Optional<Vendedor> vendedor = vendedorRepository.findById(id);
-        return vendedor.map(VendedorResponseDto::new).orElse(null);
+    public VendedorResponseDto get(long id) {
+        Vendedor vendedor = vendedorRepository.findById(id);
+        if (vendedor == null)
+            return null;
+        return new VendedorResponseDto(vendedor);
     }
 
     /**
@@ -63,13 +68,13 @@ public class VendedorService {
      * @param nombre nombre nuevo a actualizar
      * @param password cambio de la contraseña
      * @return DTO con los datos guardados visibles.
-     * @throws IllegalArgumentException  id nulo o no existe ene el sistema un vendedor con ese id.
+     * @throws RuntimeException no existe en el sistema un vendedor con ese id.
      */
-    public VendedorResponseDto update(Long id, String nombre, String password) {
-        if (id == null)
-            throw new IllegalArgumentException();
-        Vendedor vendedor = vendedorRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Vendedor no encontrado con id: " + id));
+    public VendedorResponseDto update(long id, String nombre, String password) {
+
+        Vendedor vendedor = vendedorRepository.findById(id);
+        if (vendedor == null)
+            throw new RuntimeException("Vendedor no encontrado");
 
         if (nombre != null && !nombre.isEmpty()) {
             vendedor.setNombre(nombre);
@@ -83,11 +88,9 @@ public class VendedorService {
     /**
      * Borrar un vendedor del sistema en cascada con sus relaciones
      * @param id id del vendedor a borrar.
-     * @throws IllegalArgumentException si el id es nulo
      */
-    public void delete(Long id) {
-        if (id == null)
-            throw new IllegalArgumentException();
+    public void delete(long id) {
+
         vendedorRepository.deleteById(id);
     }
 }
