@@ -1,7 +1,6 @@
-package com.gestorventas.deposito.repository;
+package com.gestorventas.deposito.repositories;
 
 import com.gestorventas.deposito.models.LineaPedido;
-import com.gestorventas.deposito.models.Pedido;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;

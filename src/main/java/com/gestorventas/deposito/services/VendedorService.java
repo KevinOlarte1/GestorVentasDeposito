@@ -2,12 +2,11 @@ package com.gestorventas.deposito.services;
 
 import com.gestorventas.deposito.dto.out.VendedorResponseDto;
 import com.gestorventas.deposito.models.Vendedor;
-import com.gestorventas.deposito.repository.VendedorRepository;
+import com.gestorventas.deposito.repositories.VendedorRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Servicio encargado de gestionar la logica del negocio relacionado con los vendedores.

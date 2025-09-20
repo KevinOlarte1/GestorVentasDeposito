@@ -26,6 +26,13 @@ public class Cliente {
     @Column(nullable = false)
     private String nombre;
 
+    /**
+     * Vendedor asignado a este cliente.
+     */
+    @ManyToOne
+    @JoinColumn(name = "fk_vendedor", nullable = true)
+    private Vendedor vendedor;
+
 
     /**
      * Lista de pedidos que tiene este cliente asociados.

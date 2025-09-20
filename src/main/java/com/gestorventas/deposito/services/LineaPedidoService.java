@@ -1,12 +1,9 @@
 package com.gestorventas.deposito.services;
 
 import com.gestorventas.deposito.dto.out.LineaPedidoResponseDto;
-import com.gestorventas.deposito.dto.out.PedidoResponseDto;
-import com.gestorventas.deposito.dto.out.VendedorResponseDto;
 import com.gestorventas.deposito.models.*;
-import com.gestorventas.deposito.repository.*;
+import com.gestorventas.deposito.repositories.*;
 import com.gestorventas.deposito.specifications.LineaPedidoSpecifications;
-import com.gestorventas.deposito.specifications.PedidoSpecifications;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -43,16 +40,8 @@ public class LineaPedidoService {
         if(pedido == null){
             throw new RuntimeException("Pedido no encontrado");
         }
-        Vendedor vendedor = vendedorRepository.findById(idProducto);
-        if(vendedor == null){
-            throw new RuntimeException("Vendedor no encontrado");
-        }
-        Cliente cliente = clienteRepository.findById(idPedido);
-        if(cliente == null){
-            throw new RuntimeException("Cliente no encontrado");
-        }
-        Producto pedidoProducto = productoRepository.findById(idPedido);
-        if(pedidoProducto == null){
+        Producto producto = productoRepository.findById(idProducto);
+        if(producto == null){
             throw new RuntimeException("Producto no encontrado");
         }
         if (cantidad <= 0 && precio <= 0){
@@ -61,7 +50,7 @@ public class LineaPedidoService {
 
         LineaPedido pedidoLinea = new LineaPedido();
         pedidoLinea.setPedido(pedido);
-        pedidoLinea.setProducto(pedidoProducto);
+        pedidoLinea.setProducto(producto);
         pedidoLinea.setCantidad(cantidad);
         pedidoLinea.setPrecio(precio);
         return new  LineaPedidoResponseDto(lineaPedidoRepository.save(pedidoLinea));

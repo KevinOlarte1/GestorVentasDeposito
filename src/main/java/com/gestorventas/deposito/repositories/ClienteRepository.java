@@ -1,7 +1,8 @@
-package com.gestorventas.deposito.repository;
+package com.gestorventas.deposito.repositories;
 
 import com.gestorventas.deposito.models.Cliente;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Repository;
  * @author Kevin William Olarte Braun.
  */
 @Repository
-public interface ClienteRepository extends JpaRepository<Cliente,Long> {
+public interface ClienteRepository extends JpaRepository<Cliente,Long>, JpaSpecificationExecutor<Cliente> {
 
     public Cliente findById(long id);
 }

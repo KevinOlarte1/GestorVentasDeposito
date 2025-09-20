@@ -1,4 +1,4 @@
-package com.gestorventas.deposito.repository;
+package com.gestorventas.deposito.repositories;
 
 import com.gestorventas.deposito.models.Producto;
 import org.springframework.data.jpa.repository.JpaRepository;

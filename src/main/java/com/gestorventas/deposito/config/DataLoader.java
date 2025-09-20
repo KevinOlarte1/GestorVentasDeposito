@@ -2,8 +2,8 @@ package com.gestorventas.deposito.config;
 
 import com.gestorventas.deposito.models.Cliente;
 import com.gestorventas.deposito.models.Producto;
-import com.gestorventas.deposito.repository.ClienteRepository;
-import com.gestorventas.deposito.repository.ProductoRepository;
+import com.gestorventas.deposito.repositories.ClienteRepository;
+import com.gestorventas.deposito.repositories.ProductoRepository;
 import net.datafaker.Faker;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;

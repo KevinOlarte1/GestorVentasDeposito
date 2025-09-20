@@ -33,12 +33,6 @@ public class Pedido {
     @JoinColumn(name = "fk_cliente", nullable = false)
     private Cliente cliente;
 
-    /**
-     * Vendedor que ha realizado el pedido
-     */
-    @ManyToOne
-    @JoinColumn(name = "fk_vendedor", nullable = false)
-    private Vendedor vendedor;
 
     /**
      * Líneas de pedido asociadas.

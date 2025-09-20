@@ -5,6 +5,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 /**
  * Clase que nos permite realizar Query dinamicas sobre las lineas de pedido.
+ * @author Kevin William Olarte Braun
  */
 public class LineaPedidoSpecifications {
     public static Specification<LineaPedido> filter(
@@ -20,7 +21,10 @@ public class LineaPedidoSpecifications {
                 predicates.getExpressions().add(cb.equal(root.get("pedido").get("id"), pedidoId));
             }
             if (vendedorId != null) {
-                predicates.getExpressions().add(cb.equal(root.get("pedido").get("vendedor").get("id"), vendedorId));
+                // Se accede al vendedor a través del cliente del pedido
+                predicates.getExpressions().add(
+                        cb.equal(root.get("pedido").get("cliente").get("vendedor").get("id"), vendedorId)
+                );
             }
             if (clienteId != null) {
                 predicates.getExpressions().add(cb.equal(root.get("pedido").get("cliente").get("id"), clienteId));

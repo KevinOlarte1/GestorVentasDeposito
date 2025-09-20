@@ -1,0 +1,104 @@
+package com.gestorventas.deposito.services;
+
+import com.gestorventas.deposito.dto.out.ClienteResponseDto;
+import com.gestorventas.deposito.models.Cliente;
+import com.gestorventas.deposito.models.Vendedor;
+import com.gestorventas.deposito.repositories.ClienteRepository;
+import com.gestorventas.deposito.repositories.VendedorRepository;
+import com.gestorventas.deposito.specifications.ClienteSpecifications;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+/**
+ * Servicio encargado de gestionar la logica del negocio relacionado con los clientes.
+ * <p>
+ *     Permite registrar, consultar, actualizar y eliminar clientes.
+ * </p>
+ * @author Kevin William Olarte Braun
+ */
+@Service
+@AllArgsConstructor
+public class ClienteService {
+    private final ClienteRepository clienteRepository;
+    private final VendedorRepository vendedorRepository;
+
+    /**
+     * Guardar un cliente nuevo en el sistema.
+     * @param nombre nombre del cleinte
+     * @param vendedorId a quien  le pertenece ese cleinte
+     * @return DTO con los datos guardados visibles.
+     * @throws IllegalArgumentException datos erroneos.
+     */
+    public ClienteResponseDto add(String nombre, Long vendedorId) {
+        if (nombre == null || nombre.isEmpty())
+            throw new IllegalArgumentException("El nombre no puede estar vacío");
+
+        Vendedor vendedor = vendedorRepository.findById(vendedorId)
+                .orElseThrow(() -> new RuntimeException("Vendedor no encontrado"));
+
+        Cliente cliente = new Cliente();
+        cliente.setNombre(nombre);
+        cliente.setVendedor(vendedor);
+
+        return new ClienteResponseDto(clienteRepository.save(cliente));
+    }
+
+    /**
+     * Obtener una linea de pedudo por su id.
+     * @param id identificador del cliente a buscar
+     * @return DTO con los datos guardados visibles.
+     */
+    public ClienteResponseDto get(long id) {
+        Cliente cliente = clienteRepository.findById(id);
+        if (cliente == null)
+            return null;
+        return new ClienteResponseDto(cliente);
+    }
+
+    /**
+     * Obtener listado de todos los lineasdePedido registrados en el sistema.
+     * se le puede añadir los siguentes idVendedor
+     * @param idVendedor vendedor al que pertenece
+     * @return Listado DTO con todos los clientes.
+     */
+    public List<Cliente> getAll(Long idVendedor) {
+        return clienteRepository.findAll(ClienteSpecifications.filter(idVendedor));
+    }
+
+    /**
+     * Actualizar los datos de un cliente existente.
+     *
+     * @param id         identificador del cliente a actualizar
+     * @param nombre     nuevo nombre del cliente (opcional)
+     * @param vendedorId identificador del nuevo vendedor (opcional)
+     * @return la entidad {@link Cliente} actualizada
+     * @throws RuntimeException si el cliente o vendedor no existen
+     */
+    public Cliente update(long id, String nombre, Long vendedorId) {
+        Cliente cliente = clienteRepository.findById(id);
+        if (cliente == null)
+            throw new IllegalArgumentException("Cliente no encontrado");
+
+        if (nombre != null && !nombre.isEmpty()) {
+            cliente.setNombre(nombre);
+        }
+        if (vendedorId != null) {
+            Vendedor vendedor = vendedorRepository.findById(vendedorId)
+                    .orElseThrow(() -> new RuntimeException("Vendedor no encontrado"));
+            cliente.setVendedor(vendedor);
+        }
+
+        return clienteRepository.save(cliente);
+    }
+
+    /**
+     * Eliminar un cliente del sistema por su identificador único.
+     *
+     * @param id identificador del cliente a eliminar
+     */
+    public void delete(long id) {
+        clienteRepository.deleteById(id);
+    }
+}

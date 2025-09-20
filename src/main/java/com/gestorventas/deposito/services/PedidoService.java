@@ -4,10 +4,9 @@ import com.gestorventas.deposito.dto.out.PedidoResponseDto;
 import com.gestorventas.deposito.models.Cliente;
 import com.gestorventas.deposito.specifications.PedidoSpecifications;
 import com.gestorventas.deposito.models.Pedido;
-import com.gestorventas.deposito.models.Vendedor;
-import com.gestorventas.deposito.repository.ClienteRepository;
-import com.gestorventas.deposito.repository.PedidoRepository;
-import com.gestorventas.deposito.repository.VendedorRepository;
+import com.gestorventas.deposito.repositories.ClienteRepository;
+import com.gestorventas.deposito.repositories.PedidoRepository;
+import com.gestorventas.deposito.repositories.VendedorRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,22 +30,16 @@ public class PedidoService {
 
     /**
      * Guardar un nuevo pedido en el sistema.
-     * @param idVendedor identificador de quien realiza el pedido
      * @param idCliente identificador a quien se le va retribuir el peiddo.
      * @return DTO con los datos guardados visibles.
      * @throws RuntimeException entidades inexistentes.
      */
-    public PedidoResponseDto add(long idVendedor, long idCliente) {
-        Vendedor vendedor = vendedorRepository.findById(idVendedor);
-        if(vendedor==null)
-            throw new RuntimeException("Vendedor inexistente");
-
+    public PedidoResponseDto add( long idCliente) {
         Cliente cliente = clienteRepository.findById(idCliente);
         if(cliente==null)
             throw new RuntimeException("Cliente inexistente");
 
         Pedido pedido = new Pedido();
-        pedido.setVendedor(vendedor);
         pedido.setCliente(cliente);
 
         pedidoRepository.save(pedido);
@@ -82,7 +75,6 @@ public class PedidoService {
     /**
      * Actualizar los datos de un pedido segun el identificador id
      * @param id id del peiddo a modificar.
-     * @param idVendedor vendedor que se le asignara nuevamente
      * @param idCliente cleinte que se le vendera el pedido
      * @param fecha fecha que se realizo el pedido actualizado
      * @return peiddo actualizado.
@@ -93,12 +85,6 @@ public class PedidoService {
 
         if(pedido==null)
             throw new RuntimeException("Pedido no encontrado");
-        if (idVendedor != null){
-            Vendedor vendedor = vendedorRepository.findById(id);
-            if(vendedor==null)
-                throw new RuntimeException("Vendedor inexistente");
-            pedido.setVendedor(vendedor);
-        }
         if (idCliente != null){
             Cliente cliente = clienteRepository.findById(id);
             if(cliente==null)
