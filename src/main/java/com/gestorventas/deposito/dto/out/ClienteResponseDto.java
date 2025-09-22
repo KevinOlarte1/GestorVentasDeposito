@@ -2,9 +2,13 @@ package com.gestorventas.deposito.dto.out;
 
 import com.gestorventas.deposito.models.Cliente;
 import com.gestorventas.deposito.models.Pedido;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
+@Getter
+@Setter
 public class ClienteResponseDto {
     private Long id;
     private String nombre;

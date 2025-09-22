@@ -18,7 +18,7 @@ import java.util.List;
  * @author Kevin William Olarte Braun
  */
 @RestController
-@RequestMapping("/api/vendedes")
+@RequestMapping("/api/vendedor")
 @AllArgsConstructor
 public class VendedorController {
 

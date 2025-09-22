@@ -13,7 +13,7 @@ import java.util.Random;
 
 @Configuration
 public class DataLoader {
-
+/*
     @Bean
     CommandLineRunner initDatabase(ProductoRepository productoRepository,
                                    ClienteRepository clienteRepository) {
@@ -29,5 +29,5 @@ public class DataLoader {
           }
 
         };
-    }
+    } */
 }

@@ -31,12 +31,14 @@ public class ClienteService {
      * @return DTO con los datos guardados visibles.
      * @throws IllegalArgumentException datos erroneos.
      */
-    public ClienteResponseDto add(String nombre, Long vendedorId) {
+    public ClienteResponseDto add(String nombre, long vendedorId) {
+
         if (nombre == null || nombre.isEmpty())
             throw new IllegalArgumentException("El nombre no puede estar vacío");
 
-        Vendedor vendedor = vendedorRepository.findById(vendedorId)
-                .orElseThrow(() -> new RuntimeException("Vendedor no encontrado"));
+        Vendedor vendedor = vendedorRepository.findById(vendedorId);
+        if (vendedor == null)
+            throw new RuntimeException("Vendedor no encontrado");
 
         Cliente cliente = new Cliente();
         cliente.setNombre(nombre);
@@ -58,13 +60,27 @@ public class ClienteService {
     }
 
     /**
+     * Obtener una linea de pedudo por su id.
+     * @param id identificador del cliente a buscar
+     * @return DTO con los datos guardados visibles.
+     */
+    public ClienteResponseDto get(long idVendedor, long id) {
+        Cliente cliente = clienteRepository.findById(id);
+        if (cliente == null)
+            return null;
+        if (cliente.getVendedor().getId() != idVendedor)
+            return null;
+        return new ClienteResponseDto(cliente);
+    }
+
+    /**
      * Obtener listado de todos los lineasdePedido registrados en el sistema.
      * se le puede añadir los siguentes idVendedor
      * @param idVendedor vendedor al que pertenece
      * @return Listado DTO con todos los clientes.
      */
-    public List<Cliente> getAll(Long idVendedor) {
-        return clienteRepository.findAll(ClienteSpecifications.filter(idVendedor));
+    public List<ClienteResponseDto> getAll(Long idVendedor) {
+        return clienteRepository.findAll(ClienteSpecifications.filter(idVendedor)).stream().map(ClienteResponseDto::new).toList();
     }
 
     /**
@@ -76,18 +92,17 @@ public class ClienteService {
      * @return la entidad {@link Cliente} actualizada
      * @throws RuntimeException si el cliente o vendedor no existen
      */
-    public Cliente update(long id, String nombre, Long vendedorId) {
+    public Cliente update(long id, String nombre, long vendedorId) {
         Cliente cliente = clienteRepository.findById(id);
         if (cliente == null)
             throw new IllegalArgumentException("Cliente no encontrado");
 
+        if (cliente.getVendedor().getId() != vendedorId)
+            throw new IllegalArgumentException("Cliente no encontrado");
+
+
         if (nombre != null && !nombre.isEmpty()) {
             cliente.setNombre(nombre);
-        }
-        if (vendedorId != null) {
-            Vendedor vendedor = vendedorRepository.findById(vendedorId)
-                    .orElseThrow(() -> new RuntimeException("Vendedor no encontrado"));
-            cliente.setVendedor(vendedor);
         }
 
         return clienteRepository.save(cliente);
@@ -100,5 +115,13 @@ public class ClienteService {
      */
     public void delete(long id) {
         clienteRepository.deleteById(id);
+    }
+
+    public void delete(long id, long idVendedor) {
+        Cliente cliente = clienteRepository.findById(id);
+        if (cliente != null){
+            if (cliente.getVendedor().getId() == idVendedor)
+                clienteRepository.deleteById(id);
+        }
     }
 }
