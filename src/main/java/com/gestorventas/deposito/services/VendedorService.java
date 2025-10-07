@@ -73,7 +73,7 @@ public class VendedorService {
 
         Vendedor vendedor = vendedorRepository.findById(id);
         if (vendedor == null)
-            throw new RuntimeException("Vendedor no encontrado");
+            return  null;
 
         if (nombre != null && !nombre.isEmpty()) {
             vendedor.setNombre(nombre);

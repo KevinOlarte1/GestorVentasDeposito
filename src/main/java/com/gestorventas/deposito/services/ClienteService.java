@@ -92,20 +92,20 @@ public class ClienteService {
      * @return la entidad {@link Cliente} actualizada
      * @throws RuntimeException si el cliente o vendedor no existen
      */
-    public Cliente update(long id, String nombre, long vendedorId) {
+    public ClienteResponseDto update(long id, String nombre, long vendedorId) {
         Cliente cliente = clienteRepository.findById(id);
         if (cliente == null)
-            throw new IllegalArgumentException("Cliente no encontrado");
+            return null;
 
         if (cliente.getVendedor().getId() != vendedorId)
-            throw new IllegalArgumentException("Cliente no encontrado");
+            return null;
 
 
         if (nombre != null && !nombre.isEmpty()) {
             cliente.setNombre(nombre);
         }
 
-        return clienteRepository.save(cliente);
+        return new ClienteResponseDto(clienteRepository.save(cliente));
     }
 
     /**

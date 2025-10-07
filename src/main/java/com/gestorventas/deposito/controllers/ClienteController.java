@@ -67,7 +67,10 @@ public class ClienteController {
             @PathVariable Long idCliente
     ) {
 
-        return ResponseEntity.ok(clienteService.get(idVendedor, idCliente));
+        ClienteResponseDto cliente = clienteService.get(idVendedor, idCliente);
+        if (cliente == null)
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(cliente);
     }
 
     /**
@@ -84,8 +87,10 @@ public class ClienteController {
             @PathVariable Long idCliente,
             @RequestBody ClienteDto dto
     ) {
-        Cliente cliente = clienteService.update(idCliente, dto.getNombre(), idVendedor);
-        return ResponseEntity.ok(new ClienteResponseDto(cliente));
+        ClienteResponseDto cliente = clienteService.update(idCliente, dto.getNombre(), idVendedor);
+        if (cliente == null)
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(cliente);
     }
 
 

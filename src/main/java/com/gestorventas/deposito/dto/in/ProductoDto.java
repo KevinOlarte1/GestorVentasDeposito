@@ -2,8 +2,9 @@ package com.gestorventas.deposito.dto.in;
 
 import lombok.Getter;
 import lombok.Setter;
+
 /**
- * Objeto de transferencia de datos (DTO) utilizado para crear o actualizar Linea de pedidos.
+ * Objeto de transferencia de datos (DTO) utilizado para crear o actualizar Vendedores.
  * <p>
  * Contiene los campos necesarios para registrar un nuevo Vendedor en el sistema.
  * No debe contener lógica de negocio ni anotaciones de persistencia.
@@ -12,9 +13,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class LineaPedidoDto {
-    private Long idPedido;
-    private Long idProducto;
-    private Integer cantidad;
-    private Double precio;
+public class ProductoDto {
+    private String descripcion;
+    private double precio;
 }

@@ -72,7 +72,10 @@ public class VendedorController {
             @PathVariable long id,
             @RequestBody VendedorDto dto
     ) {
-        return ResponseEntity.ok(vendedorService.update(id, dto.getNombre(), dto.getPassword()));
+        VendedorResponseDto vendedor =  vendedorService.update(id, dto.getNombre(), dto.getPassword());
+        if (vendedor == null)
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(vendedor);
     }
 
     /**

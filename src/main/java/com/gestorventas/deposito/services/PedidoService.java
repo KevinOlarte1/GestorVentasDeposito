@@ -34,9 +34,11 @@ public class PedidoService {
      * @return DTO con los datos guardados visibles.
      * @throws RuntimeException entidades inexistentes.
      */
-    public PedidoResponseDto add( long idCliente) {
+    public PedidoResponseDto add( long idCliente, long idVendedor) {
         Cliente cliente = clienteRepository.findById(idCliente);
         if(cliente==null)
+            throw new RuntimeException("Cliente inexistente");
+        if (cliente.getVendedor().getId()!=idVendedor)
             throw new RuntimeException("Cliente inexistente");
 
         Pedido pedido = new Pedido();
@@ -51,9 +53,13 @@ public class PedidoService {
      * @param id id que representa el identificador unico
      * @return DTO con los datos guardados visibles.
      */
-    public PedidoResponseDto get(long id) {
+    public PedidoResponseDto get(long id, long idCliente, long idVendedor) {
         Pedido pedido = pedidoRepository.findById(id);
         if(pedido==null)
+            return null;
+        if (pedido.getCliente().getId()!=idCliente)
+            return null;
+        if (pedido.getCliente().getId()!=idVendedor)
             return null;
         return new PedidoResponseDto(pedido);
     }
@@ -80,17 +86,18 @@ public class PedidoService {
      * @return peiddo actualizado.
      * @throws RuntimeException referencia no existe.
      */
-    public PedidoResponseDto update(long id, Long idVendedor, Long idCliente, LocalDate fecha) {
+    public PedidoResponseDto update(long id, long idVendedor, long idCliente, LocalDate fecha) {
         Pedido pedido = pedidoRepository.findById(id);
 
         if(pedido==null)
-            throw new RuntimeException("Pedido no encontrado");
-        if (idCliente != null){
-            Cliente cliente = clienteRepository.findById(id);
-            if(cliente==null)
-                throw new RuntimeException("Cliente inexistente");
-            pedido.setCliente(cliente);
-        }
+            return null;
+
+        if (pedido.getCliente().getId()!=idCliente)
+            return null;
+
+        if(pedido.getCliente().getVendedor().getId()!=idVendedor)
+            return null;
+
         if (fecha != null){
             pedido.setFecha(fecha);
         }
