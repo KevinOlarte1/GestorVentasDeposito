@@ -32,7 +32,7 @@ public class VendedorController {
      */
     @PostMapping
     public ResponseEntity<VendedorResponseDto> add(@RequestBody VendedorDto dto) {
-        return ResponseEntity.ok(vendedorService.add(dto.getNombre(), dto.getPassword()));
+        return ResponseEntity.ok(vendedorService.add(dto.getNombre(), dto.getPassword(), dto.getEmail()));
     }
 
     /**
@@ -72,7 +72,7 @@ public class VendedorController {
             @PathVariable long id,
             @RequestBody VendedorDto dto
     ) {
-        VendedorResponseDto vendedor =  vendedorService.update(id, dto.getNombre(), dto.getPassword());
+        VendedorResponseDto vendedor =  vendedorService.update(id, dto.getNombre(), dto.getPassword(), dto.getEmail());
         if (vendedor == null)
             return ResponseEntity.notFound().build();
         return ResponseEntity.ok(vendedor);

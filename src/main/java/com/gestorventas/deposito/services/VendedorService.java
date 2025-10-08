@@ -28,13 +28,14 @@ public class VendedorService {
      * @return DTO con los datos guardados visibles.
      * @throws IllegalArgumentException valores invalidos.
      */
-    public VendedorResponseDto add(String nombre, String password) {
-        if (nombre == null || password == null || nombre.isEmpty() || password.isEmpty())
+    public VendedorResponseDto add(String nombre, String password, String email) {
+        if (nombre == null || password == null || nombre.isEmpty() || password.isEmpty() || email == null || email.isEmpty())
             throw new IllegalArgumentException();
 
         Vendedor vendedor = new Vendedor();
         vendedor.setNombre(nombre);
         vendedor.setPassword(password);
+        vendedor.setEmail(email);
         return new VendedorResponseDto(vendedorRepository.save(vendedor));
 
     }
@@ -69,7 +70,7 @@ public class VendedorService {
      * @return DTO con los datos guardados visibles.
      * @throws RuntimeException no existe en el sistema un vendedor con ese id.
      */
-    public VendedorResponseDto update(long id, String nombre, String password) {
+    public VendedorResponseDto update(long id, String nombre, String password, String email) {
 
         Vendedor vendedor = vendedorRepository.findById(id);
         if (vendedor == null)
@@ -80,6 +81,9 @@ public class VendedorService {
         }
         if (password != null && !password.isEmpty()) {
             vendedor.setPassword(password);
+        }
+        if (email != null && !email.isEmpty()) {
+            vendedor.setEmail(email);
         }
         return new VendedorResponseDto(vendedorRepository.save(vendedor));
     }

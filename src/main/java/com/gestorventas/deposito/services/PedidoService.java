@@ -25,6 +25,7 @@ import java.util.List;
 @AllArgsConstructor
 public class PedidoService {
 
+    private final MailService mailService;
     private PedidoRepository pedidoRepository;
     private VendedorRepository vendedorRepository;
     private ClienteRepository clienteRepository;
@@ -139,6 +140,12 @@ public class PedidoService {
 
         pedido = pedidoRepository.save(pedido);
 
+        try{
+            mailService.enviarCorreoPedido(vendedor.getEmail(), pedido);
+        } catch (Exception e){
+            System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+            System.out.println(e.getMessage());
+        }
         return new PedidoResponseDto(pedido);
 
 
