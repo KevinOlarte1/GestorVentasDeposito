@@ -26,27 +26,39 @@ public class LineaPedidoService {
     private PedidoRepository pedidoRepository;
     private ProductoRepository productoRepository;
 
+
     /**
-     *  Guardar una nueva linea de pedido en el sistema.
-     * @param idPedido id del pedido que se le asignara la nueva linea
-     * @param idProducto prodcuto de la linea
-     * @param cantidad cantidad del producto
-     * @param precio precio total de la linea
+     * Guardar una nueva linea de pedido en el sistema.
+     * @param idVendedor identificador del vendedor que va a realizar el pedido.
+     * @param idCliente identificador del cliente que va a realizar el pedido.
+     * @param idPedido identificador del pedido que va a realizar el pedido.
+     * @param idProducto identificador del producto que va a agregar al pedido.
+     * @param cantidad cantidad a agregar al pedido.
+     * @param precio precio total del producto.
      * @return DTO con los datos guardados visibles.
      * @throws RuntimeException entidades inexistentes.
+     * @throws IllegalArgumentException datos erroneos.
      */
-    public LineaPedidoResponseDto add(long idPedido, long idProducto, int cantidad, double precio){
-        Pedido pedido = pedidoRepository.findById(idPedido);
-        if(pedido == null){
-            throw new RuntimeException("Pedido no encontrado");
-        }
+    public LineaPedidoResponseDto add(long idVendedor, long idCliente, long idPedido, long idProducto, int cantidad, Double precio){
+        Vendedor vendedor = vendedorRepository.findById(idVendedor);
+        if (vendedor == null)
+            throw new RuntimeException("Vendedor inexistente");
+        Cliente cliente = vendedor.getClientes().stream().filter(c -> c.getId()==idCliente).findFirst().orElse(null);
+        if (cliente == null)
+            throw new RuntimeException("Cliente inexistente");
+        Pedido pedido = cliente.getPedidos().stream().filter(p -> p.getId()==idPedido).findFirst().orElse(null);
+        if (pedido == null || pedido.isFinalizado())
+            throw new RuntimeException("Pedido inexistente");
         Producto producto = productoRepository.findById(idProducto);
-        if(producto == null){
-            throw new RuntimeException("Producto no encontrado");
-        }
-        if (cantidad <= 0 && precio <= 0){
-            throw new RuntimeException("Cantidad negativo no permitida");
-        }
+        if (producto == null)
+            throw new RuntimeException("Producto inexistente");
+        if (cantidad <= 0)
+            throw new IllegalArgumentException("La cantidad debe ser mayor a 0");
+        if (precio == null)
+            precio = producto.getPrecio() * cantidad;
+        else if (precio < 0)
+            throw new IllegalArgumentException("El precio debe ser mayor o igual 0");
+
 
         LineaPedido pedidoLinea = new LineaPedido();
         pedidoLinea.setPedido(pedido);
@@ -76,7 +88,7 @@ public class LineaPedidoService {
      * @param idCliente filtrado opcional sacar por cliente.
      * @return Listado DTO con todos los pedidos.
      */
-    public List<LineaPedidoResponseDto> getAll(Long id,Long idPedido, Long idVendedor, Long idCliente) {
+    public List<LineaPedidoResponseDto> get(Long id,Long idPedido, Long idVendedor, Long idCliente) {
         return lineaPedidoRepository.findAll(LineaPedidoSpecifications.filter(id, idPedido, idVendedor,idCliente)).stream()
                 .map(LineaPedidoResponseDto::new)
                 .toList();
@@ -106,8 +118,21 @@ public class LineaPedidoService {
      * Borrar una linea de pedido del sistema.
      * @param id id del pedido a borrar.
      */
-    public void delete(long id) {
-        lineaPedidoRepository.deleteById(id);
+    public void delete(long idVendedor, long idCliente, long idPedido, long idLinea) {
+        Vendedor vendedor = vendedorRepository.findById(idVendedor);
+        if (vendedor == null)
+            return;
+        Cliente cliente = vendedor.getClientes().stream().filter(c -> c.getId()==idCliente).findFirst().orElse(null);
+        if (cliente == null)
+            return;
+        Pedido pedido = cliente.getPedidos().stream().filter(p -> p.getId()==idPedido).findFirst().orElse(null);
+        if (pedido == null || pedido.isFinalizado())
+            return;
+        LineaPedido linea = pedido.getLineas().stream().filter(l -> l.getId()==idLinea).findFirst().orElse(null);
+
+        if (linea != null){
+            lineaPedidoRepository.deleteById(idLinea);
+        }
 
     }
 

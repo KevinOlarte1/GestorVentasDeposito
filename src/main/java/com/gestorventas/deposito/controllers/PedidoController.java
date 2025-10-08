@@ -79,4 +79,12 @@ public class PedidoController {
         pedidoService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}/cerrar")
+    public ResponseEntity<PedidoResponseDto> cerrar(
+            @PathVariable Long idVendedor,
+            @PathVariable Long idCliente,
+            @PathVariable Long id){
+        return ResponseEntity.ok(pedidoService.cerrarPedido(idVendedor, idCliente, id));
+    }
 }

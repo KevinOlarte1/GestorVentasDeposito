@@ -18,9 +18,11 @@ import lombok.Setter;
 public class VendedorResponseDto {
     private Long id;
     private String nombre;
+    private String email;
 
     public VendedorResponseDto(Vendedor vendedor) {
         this.id = vendedor.getId();
         this.nombre = vendedor.getNombre();
+        this.email = vendedor.getEmail();
     }
 }

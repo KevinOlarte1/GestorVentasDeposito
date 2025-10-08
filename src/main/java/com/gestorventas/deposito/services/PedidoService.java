@@ -2,6 +2,7 @@ package com.gestorventas.deposito.services;
 
 import com.gestorventas.deposito.dto.out.PedidoResponseDto;
 import com.gestorventas.deposito.models.Cliente;
+import com.gestorventas.deposito.models.Vendedor;
 import com.gestorventas.deposito.specifications.PedidoSpecifications;
 import com.gestorventas.deposito.models.Pedido;
 import com.gestorventas.deposito.repositories.ClienteRepository;
@@ -115,5 +116,32 @@ public class PedidoService {
     }
 
 
+    /**
+     * Cerrar un pedido ya registrado.
+     * @param idVendedor identificador del vendedor que realizo el pedido.
+     * @param idCliente identificador del cliente que realizo el pedido.
+     * @param idPedido identificador del pedido que se va a cerrar.
+     * @return DTO con los datos del pedido cerrado.
+     * @throws RuntimeException entidades inexistentes.
+     */
+    public PedidoResponseDto cerrarPedido(long idVendedor, long idCliente, long idPedido) {
+        Vendedor vendedor = vendedorRepository.findById(idVendedor);
+        if (vendedor == null)
+            throw new RuntimeException("Vendedor inexistente");
+        Cliente cliente = vendedor.getClientes().stream().filter(c -> c.getId()==idCliente).findFirst().orElse(null);
+        if (cliente == null)
+            throw new RuntimeException("Cliente inexistente");
+        Pedido pedido = cliente.getPedidos().stream().filter(p -> p.getId()==idPedido).findFirst().orElse(null);
+        if (pedido == null)
+            throw new RuntimeException("Pedido inexistente");
 
+        pedido.setFinalizado(true);
+
+        pedido = pedidoRepository.save(pedido);
+
+        return new PedidoResponseDto(pedido);
+
+
+
+    }
 }

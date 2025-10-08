@@ -33,6 +33,8 @@ public class Pedido {
     @JoinColumn(name = "fk_cliente", nullable = false)
     private Cliente cliente;
 
+    private boolean finalizado;
+
 
     /**
      * Líneas de pedido asociadas.
@@ -42,6 +44,7 @@ public class Pedido {
 
     public Pedido(){
         this.fecha = LocalDate.now();
+        this.finalizado = false;
     }
 
 

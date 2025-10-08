@@ -34,6 +34,9 @@ public class Vendedor {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    private String email;
+
     /**
      * Lista de clientes que gestiona este vendedor.
      */
@@ -44,9 +47,10 @@ public class Vendedor {
 
     public Vendedor() {}
 
-    public Vendedor(String nombre, String password) {
+    public Vendedor(String nombre, String password,String email) {
         this.nombre = nombre;
         this.password = password;
+        this.email = email;
     }
 
 }
