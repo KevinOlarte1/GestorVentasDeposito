@@ -34,7 +34,7 @@ public class Vendedor {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     /**

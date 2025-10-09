@@ -32,6 +32,8 @@ public class VendedorService {
         if (nombre == null || password == null || nombre.isEmpty() || password.isEmpty() || email == null || email.isEmpty())
             throw new IllegalArgumentException();
 
+        if (!MailService.esEmailValido(email))
+            throw new IllegalArgumentException("El email no es valido");
         Vendedor vendedor = new Vendedor();
         vendedor.setNombre(nombre);
         vendedor.setPassword(password);
@@ -83,7 +85,8 @@ public class VendedorService {
             vendedor.setPassword(password);
         }
         if (email != null && !email.isEmpty()) {
-            vendedor.setEmail(email);
+            if (MailService.esEmailValido(email))
+                vendedor.setEmail(email);
         }
         return new VendedorResponseDto(vendedorRepository.save(vendedor));
     }

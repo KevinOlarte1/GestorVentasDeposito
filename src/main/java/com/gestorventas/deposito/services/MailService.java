@@ -11,12 +11,21 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
+import java.util.regex.Pattern;
 
 @Service
 public class MailService {
 
     @Autowired
     private JavaMailSender mailSender;
+
+    // Regex para validar emails
+    private static final Pattern EMAIL_PATTERN =
+            Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
+
+    public static boolean esEmailValido(String email) {
+        return email != null && EMAIL_PATTERN.matcher(email).matches();
+    }
 
     public void enviarCorreoPedido(String destinatario, Pedido pedido) throws MessagingException {
         String html = generarHtmlPedido(pedido);

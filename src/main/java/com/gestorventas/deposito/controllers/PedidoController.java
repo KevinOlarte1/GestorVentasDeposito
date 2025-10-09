@@ -1,9 +1,12 @@
 package com.gestorventas.deposito.controllers;
 
 import com.gestorventas.deposito.dto.out.PedidoResponseDto;
+import com.gestorventas.deposito.models.Pedido;
 import com.gestorventas.deposito.services.PedidoService;
 import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -86,5 +89,19 @@ public class PedidoController {
             @PathVariable Long idCliente,
             @PathVariable Long id){
         return ResponseEntity.ok(pedidoService.cerrarPedido(idVendedor, idCliente, id));
+    }
+
+    @GetMapping("/{idPedido}/pdf")
+    public ResponseEntity<byte[]> getPedidoPdf(
+            @PathVariable Long idVendedor,
+            @PathVariable Long idCliente,
+            @PathVariable Long idPedido) {
+
+        byte[] pdfBytes = pedidoService.generarInformePdf(idPedido, idCliente, idVendedor);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=pedido-" + idPedido + ".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfBytes);
     }
 }

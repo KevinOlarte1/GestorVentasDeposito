@@ -4,8 +4,13 @@ import com.gestorventas.deposito.dto.in.ClienteDto;
 import com.gestorventas.deposito.dto.out.ClienteResponseDto;
 import com.gestorventas.deposito.models.Cliente;
 import com.gestorventas.deposito.services.ClienteService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,12 +38,17 @@ public class ClienteController {
      * @return DTO con los datos del cliente creado
      */
     @PostMapping
+    @Operation(summary = "Crear un nuevo cliente", description = "Crea un nuevo cliente en el sistema")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Usuario creado correctamente"),
+            @ApiResponse(responseCode = "500", description = "Error interlo") //TODO: CAMBIAR ESTO, FASE PRUIEBA
+    })
     public ResponseEntity<ClienteResponseDto> add(
             @PathVariable Long idVendedor,
             @RequestBody ClienteDto clienteDto
 
     ) {
-        return ResponseEntity.ok(clienteService.add(clienteDto.getNombre(),idVendedor));
+        return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.add(clienteDto.getNombre(),idVendedor));
     }
 
 
@@ -48,6 +58,8 @@ public class ClienteController {
      * @return lista de DTOs con todos los vendedores
      */
     @GetMapping
+    @Operation(summary = "Listar todos los clientes de un vendedor", description = "Listar todos los clientes de un vendedor")
+    @ApiResponse(responseCode = "200", description = "Lista de clientes encontrados")
     public ResponseEntity<List<ClienteResponseDto>> getAll(
             @PathVariable Long idVendedor
     ) {
@@ -62,10 +74,14 @@ public class ClienteController {
      * @return DTO con los datos del vendedor
      */
     @GetMapping("/{idCliente}")
+    @Operation(summary = "Obtener un cliente por su ID", description = "Obtener un cliente por su ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cliente encontrado"),
+            @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
+    })
     public ResponseEntity<ClienteResponseDto> get(
             @PathVariable Long idVendedor,
-            @PathVariable Long idCliente
-    ) {
+            @PathVariable Long idCliente) {
 
         ClienteResponseDto cliente = clienteService.get(idVendedor, idCliente);
         if (cliente == null)
@@ -81,6 +97,11 @@ public class ClienteController {
      * @param dto datos actualizados
      * @return DTO con los datos del vendedor actualizado
      */
+    @Operation(summary = "Actualizar los datos de un cliente", description = "Actualiza los datos de un cliente")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cliente actualizado"),
+            @ApiResponse(responseCode = "404", description = "Cliente no encontrado/ datos incorrectos a actualizar")
+    })
     @PutMapping("/{idCliente}")
     public ResponseEntity<ClienteResponseDto> update(
             @PathVariable Long idVendedor,
@@ -101,6 +122,10 @@ public class ClienteController {
      * @param idCliente identificador del cliente
      * @return código 204 si se eliminó correctamente
      */
+    @Operation(summary = "Eliminar un cliente", description = "Elimina un cliente del sistema")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Cliente eliminado")
+    })
     @DeleteMapping("/{idCliente}")
     public ResponseEntity<Void> delete(
             @PathVariable Long idVendedor,
