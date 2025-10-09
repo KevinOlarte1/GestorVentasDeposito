@@ -55,7 +55,7 @@ public class LineaPedidoService {
         if (cantidad <= 0)
             throw new IllegalArgumentException("La cantidad debe ser mayor a 0");
         if (precio == null)
-            precio = producto.getPrecio() * cantidad;
+            precio = producto.getPrecio();
         else if (precio < 0)
             throw new IllegalArgumentException("El precio debe ser mayor o igual 0");
 
