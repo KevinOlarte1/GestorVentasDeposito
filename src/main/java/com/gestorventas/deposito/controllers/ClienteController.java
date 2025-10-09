@@ -5,6 +5,7 @@ import com.gestorventas.deposito.dto.out.ClienteResponseDto;
 import com.gestorventas.deposito.models.Cliente;
 import com.gestorventas.deposito.services.ClienteService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
@@ -41,7 +42,7 @@ public class ClienteController {
     @Operation(summary = "Crear un nuevo cliente", description = "Crea un nuevo cliente en el sistema")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Usuario creado correctamente"),
-            @ApiResponse(responseCode = "500", description = "Error interlo") //TODO: CAMBIAR ESTO, FASE PRUIEBA
+            @ApiResponse(responseCode = "500", description = "Error interlo", content = @Content) //TODO: CAMBIAR ESTO, FASE PRUIEBA
     })
     public ResponseEntity<ClienteResponseDto> add(
             @PathVariable Long idVendedor,
@@ -77,7 +78,7 @@ public class ClienteController {
     @Operation(summary = "Obtener un cliente por su ID", description = "Obtener un cliente por su ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cliente encontrado"),
-            @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
+            @ApiResponse(responseCode = "404", description = "Cliente no encontrado", content = @Content)
     })
     public ResponseEntity<ClienteResponseDto> get(
             @PathVariable Long idVendedor,
@@ -100,7 +101,7 @@ public class ClienteController {
     @Operation(summary = "Actualizar los datos de un cliente", description = "Actualiza los datos de un cliente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cliente actualizado"),
-            @ApiResponse(responseCode = "404", description = "Cliente no encontrado/ datos incorrectos a actualizar")
+            @ApiResponse(responseCode = "404", description = "Cliente no encontrado/ datos incorrectos a actualizar", content = @Content)
     })
     @PutMapping("/{idCliente}")
     public ResponseEntity<ClienteResponseDto> update(

@@ -4,6 +4,7 @@ import com.gestorventas.deposito.dto.in.ProductoDto;
 import com.gestorventas.deposito.dto.out.ProductoResponseDto;
 import com.gestorventas.deposito.services.ProductoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
@@ -37,7 +38,7 @@ public class ProductoController {
     @Operation(summary = "Crear un nuevo producto", description = "Crea un nuevo producto en el sistema")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Producto creado correctamente"),
-            @ApiResponse(responseCode = "500", description = "Error interlo") //TODO: CAMBIAR ESTO, FASE PRUIEBA
+            @ApiResponse(responseCode = "500", description = "Error interlo", content = @Content) //TODO: CAMBIAR ESTO, FASE PRUIEBA
     })
     public ResponseEntity<ProductoResponseDto> add(
             @RequestBody ProductoDto productoDto) {
@@ -65,7 +66,7 @@ public class ProductoController {
     @Operation(summary = "Obtener un producto por su ID", description = "Obtener un producto por su ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Producto encontrado"),
-            @ApiResponse(responseCode = "404", description = "Producto no encontrado")
+            @ApiResponse(responseCode = "404", description = "Producto no encontrado", content = @Content)
     })
     public ResponseEntity<ProductoResponseDto> get(
             @PathVariable Long id) {
