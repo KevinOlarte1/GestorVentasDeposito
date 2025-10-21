@@ -1,36 +1,41 @@
 package com.gestorventas.deposito.specifications;
 
 import com.gestorventas.deposito.models.LineaPedido;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Clase que nos permite realizar Query dinamicas sobre las lineas de pedido.
- * @author Kevin William Olarte Braun
+ * Clase que nos permite realizar Query dinámicas sobre las líneas de pedido.
+ * @author Kevin
  */
 public class LineaPedidoSpecifications {
     public static Specification<LineaPedido> filter(
-            Long id, Long pedidoId, Long vendedorId, Long clienteId) {
+            Long idLinea, Long pedidoId, Long vendedorId, Long clienteId) {
 
         return (root, query, cb) -> {
-            var predicates = cb.conjunction();
+            List<Predicate> predicates = new ArrayList<>();
 
-            if (id != null) {
-                predicates.getExpressions().add(cb.equal(root.get("id"), id));
+            if (idLinea != null) {
+                predicates.add(cb.equal(root.get("id"), idLinea));
             }
             if (pedidoId != null) {
-                predicates.getExpressions().add(cb.equal(root.get("pedido").get("id"), pedidoId));
+                predicates.add(cb.equal(root.get("pedido").get("id"), pedidoId));
             }
             if (vendedorId != null) {
-                // Se accede al vendedor a través del cliente del pedido
-                predicates.getExpressions().add(
-                        cb.equal(root.get("pedido").get("cliente").get("vendedor").get("id"), vendedorId)
-                );
+                // se accede al vendedor a través del cliente del pedido
+                predicates.add(cb.equal(
+                        root.get("pedido").get("cliente").get("vendedor").get("id"), vendedorId
+                ));
             }
             if (clienteId != null) {
-                predicates.getExpressions().add(cb.equal(root.get("pedido").get("cliente").get("id"), clienteId));
+                predicates.add(cb.equal(root.get("pedido").get("cliente").get("id"), clienteId));
             }
 
-            return predicates;
+            // 🔹 Une todos los predicados con AND (todas las condiciones deben cumplirse)
+            return cb.and(predicates.toArray(new Predicate[0]));
         };
     }
 }
