@@ -3,6 +3,8 @@ package com.gestorventas.deposito.controllers;
 import com.gestorventas.deposito.dto.in.VendedorDto;
 import com.gestorventas.deposito.dto.out.VendedorResponseDto;
 import com.gestorventas.deposito.enums.Role;
+import com.gestorventas.deposito.models.Vendedor;
+import com.gestorventas.deposito.repositories.VendedorRepository;
 import com.gestorventas.deposito.services.VendedorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,6 +13,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +33,7 @@ import java.util.List;
 public class VendedorController {
 
     private final VendedorService vendedorService;
+    private final VendedorRepository vendedorRepository;
 
     /**
      * Crear un nuevo vendedor.
@@ -42,6 +47,7 @@ public class VendedorController {
             @ApiResponse(responseCode = "201", description = "Vendedor creado correctamente"),
             @ApiResponse(responseCode = "500", description = "Error interno", content = @Content)
     })
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<VendedorResponseDto> add(@RequestBody VendedorDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(vendedorService.add(dto.getNombre(), dto.getPassword(), dto.getEmail(), Role.USER));
     }
@@ -74,6 +80,7 @@ public class VendedorController {
     @GetMapping
     @Operation(summary = "Listar todos los vendedores", description = "Listar todos los vendedores")
     @ApiResponse(responseCode = "200", description = "Lista de vendedores encontrados")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<VendedorResponseDto>> getAll() {
         return ResponseEntity.ok(vendedorService.getAll());
     }
@@ -91,6 +98,7 @@ public class VendedorController {
             @ApiResponse(responseCode = "404", description = "Vendedor no encontrado/ datos incorrectos a actualizar", content = @Content)
     })
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<VendedorResponseDto> update(
             @PathVariable long id,
             @RequestBody VendedorDto dto
@@ -110,9 +118,25 @@ public class VendedorController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar un vendedor por su ID", description = "Elimina un vendedor por su ID")
     @ApiResponse(responseCode = "204", description = "Vendedor eliminado correctamente")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable long id) {
         vendedorService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Endpoint protegido de ejemplo: perfil actual
+    @GetMapping("/me")
+    @Operation(summary = "Obtener info del  Vendedor", description = "Informa sobre el vendedor usado")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Vendedor encontrado"),
+            @ApiResponse(responseCode = "404", description = "Vendedor no encontrado/ datos incorrectos a actualizar", content = @Content)
+    })
+    public ResponseEntity<VendedorResponseDto> me(Authentication auth) {
+        var email = auth.getName();
+        Vendedor u = vendedorRepository.findByEmail(email).orElseThrow();
+        return ResponseEntity.ok(
+                new VendedorResponseDto(u)
+        );
     }
 }
 

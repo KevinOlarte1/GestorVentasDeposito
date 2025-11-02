@@ -3,6 +3,8 @@ package com.gestorventas.deposito.controllers;
 import com.gestorventas.deposito.dto.in.ClienteDto;
 import com.gestorventas.deposito.dto.out.ClienteResponseDto;
 import com.gestorventas.deposito.models.Cliente;
+import com.gestorventas.deposito.models.Vendedor;
+import com.gestorventas.deposito.repositories.VendedorRepository;
 import com.gestorventas.deposito.services.ClienteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,10 +15,13 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -26,16 +31,17 @@ import java.util.List;
  * @author Kevin William Olarte Braun
  */
 @RestController
-@RequestMapping("/api/vendedor/{idVendedor}/cliente")
+//@RequestMapping("/api/vendedor/{idVendedor}/cliente")
+@RequestMapping("/api/cliente")
 @AllArgsConstructor
 public class ClienteController {
 
     private final ClienteService clienteService;
+    private final VendedorRepository vendedorRepository;
 
     /**
      * Crear un nuevo cliente.
      *
-     * @param idVendedor identificador del vendedor al que pertenece el cliente
      * @return DTO con los datos del cliente creado
      */
     @PostMapping
@@ -45,32 +51,47 @@ public class ClienteController {
             @ApiResponse(responseCode = "500", description = "Error interlo", content = @Content) //TODO: CAMBIAR ESTO, FASE PRUIEBA
     })
     public ResponseEntity<ClienteResponseDto> add(
-            @PathVariable Long idVendedor,
+            Authentication auth,
             @RequestBody ClienteDto clienteDto
 
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.add(clienteDto.getNombre(),idVendedor));
+        var email = auth.getName();
+        Vendedor u = vendedorRepository.findByEmail(email).orElseThrow();
+        return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.add(clienteDto.getNombre(),u.getId()));
     }
 
 
     /**
      * Listar todos los clientes de ese vendedor.
-     * @param idVendedor identificador del Vendedor
      * @return lista de DTOs con todos los vendedores
      */
     @GetMapping
     @Operation(summary = "Listar todos los clientes de un vendedor", description = "Listar todos los clientes de un vendedor")
     @ApiResponse(responseCode = "200", description = "Lista de clientes encontrados")
     public ResponseEntity<List<ClienteResponseDto>> getAll(
-            @PathVariable Long idVendedor
+            Authentication auth
     ) {
+        var email = auth.getName();
+        Vendedor u = vendedorRepository.findByEmail(email).orElseThrow();
+        return ResponseEntity.ok(clienteService.getAll(u.getId()));
+    }
+
+    /**
+     * Listar todos los clientes de ese vendedor.
+     * @param idVendedor identificador del vendedor
+     * @return lista de DTOs con todos los vendedores
+     */
+    @GetMapping("/vendedor/{idVendedor}")
+    @Operation(summary = "Listar todos los clientes de un vendedor", description = "Listar todos los clientes de un vendedor")
+    @ApiResponse(responseCode = "200", description = "Lista de clientes encontrados")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<ClienteResponseDto>> getAllAdmin(@PathVariable Long idVendedor){
         return ResponseEntity.ok(clienteService.getAll(idVendedor));
     }
 
     /**
      * Obtener un cliente por su ID.
      *
-     * @param idVendedor identificador del vendedor
      * @param idCliente identificador del cliente
      * @return DTO con los datos del vendedor
      */
@@ -81,19 +102,37 @@ public class ClienteController {
             @ApiResponse(responseCode = "404", description = "Cliente no encontrado", content = @Content)
     })
     public ResponseEntity<ClienteResponseDto> get(
-            @PathVariable Long idVendedor,
+            Authentication auth,
             @PathVariable Long idCliente) {
 
-        ClienteResponseDto cliente = clienteService.get(idVendedor, idCliente);
+        var email = auth.getName();
+        Vendedor u = vendedorRepository.findByEmail(email).orElseThrow();
+        ClienteResponseDto cliente = clienteService.get(u.getId(), idCliente);
         if (cliente == null)
             return ResponseEntity.notFound().build();
         return ResponseEntity.ok(cliente);
     }
 
+
+    /**
+     * Obtener un cliente por su ID.
+     * @param IdCliente identificador del cliente
+     * @return DTO con los datos del cliente
+     */
+    @GetMapping("/admin/{IdCliente}")
+    @Operation(summary = "Obtener un cliente por su ID", description = "Obtener un cliente por su ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cliente encontrado"),
+            @ApiResponse(responseCode = "404", description = "Cliente no encontrado", content = @Content)
+    })
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ClienteResponseDto> getAdmin(@PathVariable Long IdCliente){
+        return ResponseEntity.ok(clienteService.get(IdCliente));
+    }
+
     /**
      * Actualizar los datos de un cliente existente.
      *
-     * @param idVendedor identificador del vendedor
      * @param idCliente identificador del cliente
      * @param dto datos actualizados
      * @return DTO con los datos del vendedor actualizado
@@ -105,21 +144,23 @@ public class ClienteController {
     })
     @PutMapping("/{idCliente}")
     public ResponseEntity<ClienteResponseDto> update(
-            @PathVariable Long idVendedor,
+            Authentication auth,
             @PathVariable Long idCliente,
             @RequestBody ClienteDto dto
     ) {
-        ClienteResponseDto cliente = clienteService.update(idCliente, dto.getNombre(), idVendedor);
+        var email = auth.getName();
+        Vendedor u = vendedorRepository.findByEmail(email).orElseThrow();
+        ClienteResponseDto cliente = clienteService.update(idCliente, dto.getNombre(), u.getId());
         if (cliente == null)
             return ResponseEntity.notFound().build();
         return ResponseEntity.ok(cliente);
     }
 
 
+
     /**
      * Eliminar un cliente por su ID.
      *
-     * @param idVendedor identificador del vendedor
      * @param idCliente identificador del cliente
      * @return código 204 si se eliminó correctamente
      */
@@ -129,11 +170,12 @@ public class ClienteController {
     })
     @DeleteMapping("/{idCliente}")
     public ResponseEntity<Void> delete(
-            @PathVariable Long idVendedor,
+            Authentication auth,
             @PathVariable Long idCliente
     ) {
-
-        clienteService.delete(idCliente, idVendedor);
+        var email = auth.getName();
+        Vendedor u = vendedorRepository.findByEmail(email).orElseThrow();
+        clienteService.delete(idCliente, u.getId());
         return ResponseEntity.noContent().build();
     }
 }

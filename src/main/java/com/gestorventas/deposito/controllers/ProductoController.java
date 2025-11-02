@@ -12,6 +12,7 @@ import lombok.Getter;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,6 +41,7 @@ public class ProductoController {
             @ApiResponse(responseCode = "201", description = "Producto creado correctamente"),
             @ApiResponse(responseCode = "500", description = "Error interlo", content = @Content) //TODO: CAMBIAR ESTO, FASE PRUIEBA
     })
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductoResponseDto> add(
             @RequestBody ProductoDto productoDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productoService.add(productoDto.getDescripcion(), productoDto.getPrecio()));
@@ -82,6 +84,7 @@ public class ProductoController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar un producto por su ID", description = "Eliminar un producto por su ID")
     @ApiResponse(responseCode = "204", description = "Producto eliminado correctamente")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         productoService.remove(id);
         return ResponseEntity.noContent().build();
