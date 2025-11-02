@@ -1,10 +1,12 @@
 package com.gestorventas.deposito.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gestorventas.deposito.enums.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -36,6 +38,23 @@ public class Vendedor {
 
     @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(length = 512)
+    private String refreshToken;
+    private LocalDateTime refreshTokenExpiry;
+
+    private String resetCode;
+    private LocalDateTime resetCodeExpiry;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(
+            name = "vendedor_roles",
+            joinColumns = @JoinColumn(name = "vendedor_id")
+    )
+    @Column(name = "role")
+    private Set<Role> roles;
+
 
     /**
      * Lista de clientes que gestiona este vendedor.
