@@ -127,18 +127,15 @@ public class LineaPedidoService {
         if (pedido == null || pedido.isFinalizado())
             return;
 
-        if (pedido.getCliente() == null ||
-                pedido.getCliente().getId() != idCliente ||
-                pedido.getCliente().getVendedor() == null ||
-                pedido.getCliente().getVendedor().getId() != idVendedor)
+        Cliente cliente = clienteRepository.findById(idCliente);
+        if (cliente == null || cliente.getVendedor() == null || cliente.getVendedor().getId() != idVendedor)
             return;
 
-        LineaPedido linea = pedido.getLineas().stream()
-                .filter(l -> l.getId() == idLinea)
-                .findFirst()
-                .orElse(null);
 
-        if (linea != null)
-            lineaPedidoRepository.deleteById(idLinea);
+        LineaPedido linea = lineaPedidoRepository.findById(idLinea);
+        if (linea == null || linea.getPedido() == null || linea.getPedido().getId() != idPedido)
+            return;
+
+        lineaPedidoRepository.deleteById(idLinea);
     }
 }
