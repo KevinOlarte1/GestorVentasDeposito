@@ -5,6 +5,7 @@ import com.gestorventas.deposito.enums.Role;
 import com.gestorventas.deposito.models.Vendedor;
 import com.gestorventas.deposito.repositories.VendedorRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.Set;
 public class VendedorService {
 
     private VendedorRepository vendedorRepository;
+    private PasswordEncoder passwordEncoder;
 
 
     /**
@@ -44,7 +46,7 @@ public class VendedorService {
         var vendedor =Vendedor.builder()
                 .nombre(nombre)
                 .email(email)
-                .password(password)
+                .password(passwordEncoder.encode(password))
                 .roles(Set.of(role))
                 .build();
         return new VendedorResponseDto(vendedorRepository.save(vendedor));
