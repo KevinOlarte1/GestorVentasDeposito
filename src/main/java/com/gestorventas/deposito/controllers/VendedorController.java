@@ -2,6 +2,7 @@ package com.gestorventas.deposito.controllers;
 
 import com.gestorventas.deposito.dto.in.VendedorDto;
 import com.gestorventas.deposito.dto.out.VendedorResponseDto;
+import com.gestorventas.deposito.enums.Role;
 import com.gestorventas.deposito.services.VendedorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -42,7 +43,7 @@ public class VendedorController {
             @ApiResponse(responseCode = "500", description = "Error interno", content = @Content)
     })
     public ResponseEntity<VendedorResponseDto> add(@RequestBody VendedorDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(vendedorService.add(dto.getNombre(), dto.getPassword(), dto.getEmail()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(vendedorService.add(dto.getNombre(), dto.getPassword(), dto.getEmail(), Role.USER));
     }
 
     /**

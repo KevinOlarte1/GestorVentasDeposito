@@ -3,8 +3,7 @@ package com.gestorventas.deposito.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gestorventas.deposito.enums.Role;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
@@ -16,8 +15,9 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "vendedores")
-@Getter
-@Setter
+@Getter @Setter @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Vendedor {
 
     @Id
@@ -63,8 +63,6 @@ public class Vendedor {
     @JsonIgnore
     private Set<Cliente> clientes = new LinkedHashSet<>();
 
-
-    public Vendedor() {}
 
     public Vendedor(String nombre, String password,String email) {
         this.nombre = nombre;

@@ -1,12 +1,15 @@
 package com.gestorventas.deposito.services;
 
 import com.gestorventas.deposito.dto.out.VendedorResponseDto;
+import com.gestorventas.deposito.enums.Role;
 import com.gestorventas.deposito.models.Vendedor;
 import com.gestorventas.deposito.repositories.VendedorRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Servicio encargado de gestionar la logica del negocio relacionado con los vendedores.
@@ -21,23 +24,29 @@ public class VendedorService {
 
     private VendedorRepository vendedorRepository;
 
+
     /**
      * Guardar un nuevo vendedor en el sistema.
      * @param nombre nombre que recibira el vendedor
      * @param password contraseña para seguridad
+     * @param email email del vendedor
+     * @param role rol que tendra el vendedor
      * @return DTO con los datos guardados visibles.
      * @throws IllegalArgumentException valores invalidos.
      */
-    public VendedorResponseDto add(String nombre, String password, String email) {
+    public VendedorResponseDto add(String nombre, String password, String email, Role role) {
         if (nombre == null || password == null || nombre.isEmpty() || password.isEmpty() || email == null || email.isEmpty())
             throw new IllegalArgumentException();
 
         if (!MailService.esEmailValido(email))
             throw new IllegalArgumentException("El email no es valido");
-        Vendedor vendedor = new Vendedor();
-        vendedor.setNombre(nombre);
-        vendedor.setPassword(password);
-        vendedor.setEmail(email);
+
+        var vendedor =Vendedor.builder()
+                .nombre(nombre)
+                .email(email)
+                .password(password)
+                .roles(Set.of(role))
+                .build();
         return new VendedorResponseDto(vendedorRepository.save(vendedor));
 
     }
@@ -98,5 +107,17 @@ public class VendedorService {
     public void delete(long id) {
 
         vendedorRepository.deleteById(id);
+    }
+
+    /**
+     * Metodo para obtener los datos de un usuario en formato JSON.Para el uso en el JWT
+     * @param u vendedor que se desea obtener los datos.
+     * @return Map con los datos del usuario.
+     */
+    public Map<String, Object> userClaims(Vendedor u) {
+        return Map.of(
+                "name", u.getNombre(),
+                "roles", u.getRoles().stream().map(Enum::name).toList()
+        );
     }
 }
