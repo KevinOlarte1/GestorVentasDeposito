@@ -64,15 +64,36 @@ public class PedidoService {
     /**
      * Obtener un pedido por su id.
      * @param id id que representa el identificador unico
+     * @param idCliente identificador del cliente
+     * @param idVendedor identificador del vendedor
      * @return DTO con los datos guardados visibles.
      */
     public PedidoResponseDto get(long id, long idCliente, long idVendedor) {
+        Vendedor vendedor = vendedorRepository.findById(idVendedor);
+        if (vendedor == null)
+            return null;
+        Cliente cliente = clienteRepository.findById(idCliente);
+        if (cliente == null || cliente.getVendedor() == null || cliente.getVendedor().getId() != idVendedor)
+            return null;
         Pedido pedido = pedidoRepository.findById(id);
-        if(pedido==null)
+        if (pedido == null || pedido.getCliente() == null || pedido.getCliente().getId() != idCliente)
             return null;
-        if (pedido.getCliente().getId()!=idCliente)
+        return new PedidoResponseDto(pedido);
+    }
+
+    /**
+     * Obtener un pedido por su id.
+     * @param id id que representa el identificador unico
+     * @param idCliente identificador del cliente
+     * @return DTO con los datos guardados visibles.
+     */
+    public PedidoResponseDto get(long id, long idCliente) {
+
+        Cliente cliente = clienteRepository.findById(idCliente);
+        if (cliente == null)
             return null;
-        if (pedido.getCliente().getId()!=idVendedor)
+        Pedido pedido = pedidoRepository.findById(id);
+        if (pedido == null || pedido.getCliente() == null || pedido.getCliente().getId() != idCliente)
             return null;
         return new PedidoResponseDto(pedido);
     }
@@ -122,8 +143,17 @@ public class PedidoService {
      * Borrar un pedido del sistema en cascada con sus relaciones
      * @param id id del pedido a borrar.
      */
-    public void delete(long id) {
-        pedidoRepository.deleteById(id);
+    public void delete(long id, long idVendedor, long idCliente) {
+        Vendedor vendedor = vendedorRepository.findById(idVendedor);
+        if (vendedor == null)
+            return;
+        Cliente cliente = clienteRepository.findById(idCliente);
+        if (cliente == null || cliente.getVendedor() == null || cliente.getVendedor().getId() != idVendedor)
+            return;
+        Pedido pedido = pedidoRepository.findById(id);
+        if (pedido == null || pedido.getCliente() == null || pedido.getCliente().getId() != idCliente)
+            return;
+        pedidoRepository.delete(pedido);
 
     }
 

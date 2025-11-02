@@ -104,6 +104,17 @@ public class LineaPedidoService {
     }
 
     /**
+     * Obtener listado de todas las líneas de pedido filtradas.
+     */
+    public List<LineaPedidoResponseDto> get(Long idLinea, Long idPedido, Long idCliente) {
+        return lineaPedidoRepository.findAll(
+                        LineaPedidoSpecifications.filter(idLinea, idPedido, null, idCliente)
+                ).stream()
+                .map(LineaPedidoResponseDto::new)
+                .toList();
+    }
+
+    /**
      * Actualizar una línea de pedido existente.
      */
     public LineaPedidoResponseDto update(long id, Integer cantidad, Double precio) {
