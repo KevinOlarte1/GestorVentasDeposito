@@ -4,12 +4,17 @@ import com.gestorventas.deposito.dto.out.ClienteResponseDto;
 import com.gestorventas.deposito.models.Cliente;
 import com.gestorventas.deposito.models.Vendedor;
 import com.gestorventas.deposito.repositories.ClienteRepository;
+import com.gestorventas.deposito.repositories.PedidoRepository;
 import com.gestorventas.deposito.repositories.VendedorRepository;
 import com.gestorventas.deposito.specifications.ClienteSpecifications;
+import io.swagger.v3.oas.models.links.Link;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Servicio encargado de gestionar la logica del negocio relacionado con los clientes.
@@ -23,6 +28,7 @@ import java.util.List;
 public class ClienteService {
     private final ClienteRepository clienteRepository;
     private final VendedorRepository vendedorRepository;
+    private final PedidoRepository pedidoRepository;
 
     /**
      * Guardar un cliente nuevo en el sistema.
@@ -123,5 +129,36 @@ public class ClienteService {
             if (cliente.getVendedor().getId() == idVendedor)
                 clienteRepository.deleteById(id);
         }
+    }
+
+    /**
+     * Obtener estadisticas de los gastos anuelaes del cliente
+     * @param idCliente identificador del cliente
+     * @return {@return Map<String, Double> total} mapeo con los gastos.
+     */
+    public Map<String, Double> getStats(Long idCliente) {
+        Map<String,Double> total = new LinkedHashMap<>();
+        for (Object[] row: pedidoRepository.getEstadisticaPorCliente(idCliente)){
+            String year = String.valueOf(((Number) row[0]).intValue());
+            Double totalPedido = ((Number) row[1]).doubleValue();
+            total.put(year, totalPedido);
+        }
+        return total;
+    }
+
+    /**
+     * Obtener estadisticas de los gastos anuelaes del cliente
+     * @param idCliente identificador del cliente
+     * @param idVendedor identificador del vendedor
+     * @return {@return Map<String, Double> total} mapeo con los gastos.
+     */
+    public Map<String, Double> getStats(Long idCliente, Long idVendedor) {
+        Map<String,Double> total = new LinkedHashMap<>();
+        for (Object[] row: pedidoRepository.getTotalesPorClientesDeVendedor(idVendedor,idCliente)){
+            String year = String.valueOf(((Number) row[0]).intValue());
+            Double totalPedido = ((Number) row[1]).doubleValue();
+            total.put(year, totalPedido);
+        }
+        return total;
     }
 }

@@ -1,8 +1,10 @@
 package com.gestorventas.deposito.services;
 
 import com.gestorventas.deposito.dto.out.ProductoResponseDto;
+import com.gestorventas.deposito.enums.CategoriaProducto;
 import com.gestorventas.deposito.models.Producto;
 import com.gestorventas.deposito.repositories.ProductoRepository;
+import com.gestorventas.deposito.specifications.ProductosSpecifications;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +30,7 @@ public class ProductoService {
      * @return DTO con los datos guardados visibles.
      * @throws RuntimeException entidades inexistentes.
      */
-    public ProductoResponseDto add(String descripcion, double precio) {
+    public ProductoResponseDto add(String descripcion, double precio, CategoriaProducto categoriaProducto) {
         if (descripcion == null || descripcion.isEmpty()) {
             throw new IllegalArgumentException("El descripcion es obligatorio");
         }
@@ -36,9 +38,15 @@ public class ProductoService {
             throw new IllegalArgumentException("El precio es obligatorio");
         }
 
-        Producto producto = new Producto();
-        producto.setDescripcion(descripcion);
-        producto.setPrecio(precio);
+        if (categoriaProducto == null) {
+            throw new IllegalArgumentException("La categoria es obligatoria");
+        }
+
+        Producto producto = Producto.builder()
+                .categoria(categoriaProducto)
+                .descripcion(descripcion)
+                .precio(precio)
+                .build();
         producto = productoRepository.save(producto);
         return new ProductoResponseDto(producto);
     }
@@ -47,9 +55,11 @@ public class ProductoService {
      * Listado con todos los priductos del sistema.
      * @return listado con los productos
      */
-    public List<ProductoResponseDto> getAll() {
-        List<Producto> productos = productoRepository.findAll();
-        return productos.stream().map(ProductoResponseDto::new).toList();
+    public List<ProductoResponseDto> getAll(CategoriaProducto categoriaProducto) {
+        var spec = ProductosSpecifications.withFilter(categoriaProducto);
+        return productoRepository.findAll(spec).stream()
+                .map(ProductoResponseDto::new)
+                .toList();
     }
 
     /**
@@ -67,6 +77,7 @@ public class ProductoService {
         }
         return new ProductoResponseDto(producto);
     }
+
 
     /**
      * Metodo para eliminar un producto del sistema.

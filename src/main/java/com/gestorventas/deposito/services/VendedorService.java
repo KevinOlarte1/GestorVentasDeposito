@@ -3,11 +3,13 @@ package com.gestorventas.deposito.services;
 import com.gestorventas.deposito.dto.out.VendedorResponseDto;
 import com.gestorventas.deposito.enums.Role;
 import com.gestorventas.deposito.models.Vendedor;
+import com.gestorventas.deposito.repositories.PedidoRepository;
 import com.gestorventas.deposito.repositories.VendedorRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,6 +25,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class VendedorService {
 
+    private final PedidoRepository pedidoRepository;
     private VendedorRepository vendedorRepository;
     private PasswordEncoder passwordEncoder;
 
@@ -121,5 +124,25 @@ public class VendedorService {
                 "name", u.getNombre(),
                 "roles", u.getRoles().stream().map(Enum::name).toList()
         );
+    }
+
+    public Map<String, Double> getStats() {
+        Map<String, Double> result = new LinkedHashMap<>();
+        for (Object[] row: pedidoRepository.getEstadisticaGlobal()){
+            String year = String.valueOf(((Number) row[0]).intValue());
+            Double total = ((Number) row[1]).doubleValue();
+            result.put(year, total);
+        }
+        return result;
+    }
+
+    public Map<String, Double> getStats(Long idVendedor) {
+        Map<String, Double> result = new LinkedHashMap<>();
+        for (Object[] row: pedidoRepository.getEstadisticaPorVendedor(idVendedor)){
+            String year = String.valueOf(((Number) row[0]).intValue());
+            Double total = ((Number) row[1]).doubleValue();
+            result.put(year, total);
+        }
+        return result;
     }
 }

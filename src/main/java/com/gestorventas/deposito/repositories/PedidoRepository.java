@@ -52,11 +52,11 @@ public interface PedidoRepository extends JpaRepository<Pedido,Long>, JpaSpecifi
 
     // 🔹 Totales por cliente de un vendedor (agrupado por nombre)
     @Query("""
-           SELECT p.cliente.nombre, SUM(lp.precio * lp.cantidad)
+           SELECT EXTRACT(YEAR FROM p.fecha), SUM(lp.precio * lp.cantidad)
            FROM Pedido p JOIN p.lineas lp
-           WHERE p.finalizado = true AND p.cliente.vendedor.id = :idVendedor
-           GROUP BY p.cliente.nombre
-           ORDER BY p.cliente.nombre
+           WHERE p.finalizado = true AND p.cliente.vendedor.id = :idVendedor AND p.cliente.id = :idCliente
+           GROUP BY EXTRACT(YEAR FROM p.fecha)
+           ORDER BY EXTRACT(YEAR FROM p.fecha)
            """)
-    List<Object[]> getTotalesPorClientesDeVendedor(@Param("idVendedor") Long idVendedor);
+    List<Object[]> getTotalesPorClientesDeVendedor(@Param("idVendedor") Long idVendedor, @Param("idCliente") Long idCliente);
 }

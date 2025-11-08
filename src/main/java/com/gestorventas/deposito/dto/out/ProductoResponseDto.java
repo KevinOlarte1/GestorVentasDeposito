@@ -1,5 +1,6 @@
 package com.gestorventas.deposito.dto.out;
 
+import com.gestorventas.deposito.enums.CategoriaProducto;
 import com.gestorventas.deposito.models.Producto;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,10 +20,12 @@ public class ProductoResponseDto {
     private Long id;
     private String descripcion;
     private Double precio;
+    private CategoriaProducto categoria;
 
     public ProductoResponseDto(Producto producto) {
         this.id = producto.getId();
         this.descripcion = producto.getDescripcion();
         this.precio = producto.getPrecio();
+        this.categoria = producto.getCategoria();
     }
 }

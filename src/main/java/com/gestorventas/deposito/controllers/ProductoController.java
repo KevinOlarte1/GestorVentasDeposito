@@ -2,6 +2,7 @@ package com.gestorventas.deposito.controllers;
 
 import com.gestorventas.deposito.dto.in.ProductoDto;
 import com.gestorventas.deposito.dto.out.ProductoResponseDto;
+import com.gestorventas.deposito.enums.CategoriaProducto;
 import com.gestorventas.deposito.services.ProductoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -44,7 +45,7 @@ public class ProductoController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductoResponseDto> add(
             @RequestBody ProductoDto productoDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(productoService.add(productoDto.getDescripcion(), productoDto.getPrecio()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(productoService.add(productoDto.getDescripcion(), productoDto.getPrecio(), productoDto.getCategoria()));
     }
 
     /**
@@ -55,8 +56,10 @@ public class ProductoController {
     @GetMapping
     @Operation(summary = "Listar todos los productos", description = "Listar todos los productos")
     @ApiResponse(responseCode = "200", description = "Lista de productos encontrados")
-    public ResponseEntity<List<ProductoResponseDto>> getAll() {
-        return ResponseEntity.ok(productoService.getAll());
+    public ResponseEntity<List<ProductoResponseDto>> getAll(
+            @RequestParam(required = false)CategoriaProducto categoria
+            ) {
+        return ResponseEntity.ok(productoService.getAll(categoria));
     }
 
     /**

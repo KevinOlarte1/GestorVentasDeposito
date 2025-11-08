@@ -1,5 +1,6 @@
 package com.gestorventas.deposito.dto.in;
 
+import com.gestorventas.deposito.enums.CategoriaProducto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,5 +16,6 @@ import lombok.Setter;
 @Setter
 public class ProductoDto {
     private String descripcion;
-    private double precio;
+    private Double precio;
+    private CategoriaProducto categoria;
 }

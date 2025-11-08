@@ -24,6 +24,7 @@ public class PedidoResponseDto {
     private LocalDate fecha;
     private Long idCliente;
     private List<Long> idLineaPedido;
+    private boolean cerrado;
 
     public PedidoResponseDto(Pedido pedido) {
         this.id = pedido.getId();
@@ -33,5 +34,6 @@ public class PedidoResponseDto {
                 .stream()
                 .map(LineaPedido::getId)
                 .toList();
+        this.cerrado = pedido.isFinalizado();
     }
 }

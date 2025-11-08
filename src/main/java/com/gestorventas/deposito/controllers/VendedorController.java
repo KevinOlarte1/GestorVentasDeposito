@@ -18,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Controlador REST encargado de exponer los endpoints relacionados con los Vendedores.
@@ -124,7 +125,11 @@ public class VendedorController {
         return ResponseEntity.noContent().build();
     }
 
-    // Endpoint protegido de ejemplo: perfil actual
+    /**
+     * Metod par ver la infromacion del usuario actual
+     * @param auth credenciales del usuario actual
+     * @return un dto con la informacion del usuario actual
+     */
     @GetMapping("/me")
     @Operation(summary = "Obtener info del  Vendedor", description = "Informa sobre el vendedor usado")
     @ApiResponses(value = {
@@ -138,5 +143,47 @@ public class VendedorController {
                 new VendedorResponseDto(u)
         );
     }
+
+    /**
+     * Metodo para obtener las estadisticas globales de la empresa
+     * @return map con los datos de estadisticas
+     */
+    @GetMapping("/stats")
+    @Operation(summary = "Obtener las estadisticas globales", description = "ingresos por año de toda la empresa")
+    @ApiResponse(responseCode = "200", description = "Mapeo por año de los ingresos")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, Double>> getStats() {
+        return ResponseEntity.ok( vendedorService.getStats());
+    }
+
+    /**
+     * Metodo para obtener las estadisticas de un vendedor especifico
+     * @param idVendedor identificador del vendedor
+     * @return map con los datos de estadisticas
+     */
+    @GetMapping("/{idVendedor}/stats")
+    @Operation(summary = "Obtener las estadisticas de un vendedor", description = "ingresos por año de un vendededor especifico")
+    @ApiResponse(responseCode = "200", description = "Mapeo por año de los ingresos de ese vendedor.")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, Double>> getStatsByVendedor(Long idVendedor) {
+        return ResponseEntity.ok( vendedorService.getStats(idVendedor));
+    }
+
+    /**
+     * Metodo para obtener las estadisticas de un vendedor especifico
+     * @param auth credenciales del usuario actual
+     * @return map con los datos de estadisticas
+     */
+    @GetMapping("/me/stats")
+    @Operation(summary = "Obtener las estadisticas del usuario actual", description = "ingresos por año de las ventas del vendedor en uso")
+    @ApiResponse(responseCode = "200", description = "Mapeo por año de los ingresos")
+    public ResponseEntity<Map<String, Double>> getStats(Authentication auth) {
+        var email = auth.getName();
+        Vendedor u = vendedorRepository.findByEmail(email).orElseThrow();
+        Long idVendedor = u.getId();
+        return ResponseEntity.ok( vendedorService.getStats(idVendedor));
+    }
+
+
 }
 

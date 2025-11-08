@@ -178,5 +178,36 @@ public class ClienteController {
         clienteService.delete(idCliente, u.getId());
         return ResponseEntity.noContent().build();
     }
+
+    /**
+     * Sacar un maepo con los gastos de un cliente de forma anual.
+     * @param idCliente identificador del cliente
+     * @return Map<String, Double> con los gastos anuales.
+     */
+    @GetMapping("/admin/{idCliente}/stats")
+    @Operation(summary = "Obtener las estadisticas de un cliente", description = "listado anual de los gastos de un cliente")
+    @ApiResponse(responseCode = "200", description = "Lista de clientes encontrados")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, Double>> getStats(@PathVariable Long idCliente){
+        return ResponseEntity.ok(clienteService.getStats(idCliente));
+    }
+
+    /**
+     * Sacar un maepo con los gastos de un cliente de forma anual.
+     * @param auth credenciales del usuario actual
+     * @param idCliente identificador del cliente
+     * @return Map<String, Double> con los gastos anuales.
+     */
+    @GetMapping("/{idCliente}/stats")
+    @Operation(summary = "Obtener las estadisticas de un cliente", description = "listado anual de los gastos de un cliente")
+    @ApiResponse(responseCode = "200", description = "Lista de clientes encontrados")
+    public ResponseEntity<Map<String, Double>> getStats(Authentication auth,
+                                                        @PathVariable Long idCliente){
+        var email = auth.getName();
+        Vendedor u = vendedorRepository.findByEmail(email).orElseThrow();
+        return ResponseEntity.ok(clienteService.getStats(idCliente, u.getId()));
+    }
+
+
 }
 

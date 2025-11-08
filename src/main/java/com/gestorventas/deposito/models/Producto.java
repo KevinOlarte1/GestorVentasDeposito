@@ -1,6 +1,9 @@
 package com.gestorventas.deposito.models;
 
+import com.gestorventas.deposito.enums.CategoriaProducto;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,8 +12,8 @@ import lombok.Setter;
  */
 @Entity
 @Table(name = "productos")
-@Getter
-@Setter
+@Getter @Setter @AllArgsConstructor
+@Builder
 public class Producto {
 
     @Id
@@ -29,11 +32,15 @@ public class Producto {
     @Column(nullable = false)
     private Double precio;
 
+    @Column(nullable = false)
+    private CategoriaProducto categoria;
+
 
     public Producto() {}
 
-    public Producto(String descripcion, Double precio) {
+    public Producto(String descripcion, Double precio, CategoriaProducto categoria) {
         this.descripcion = descripcion;
         this.precio = precio;
+        this.categoria = categoria;
     }
 }
